@@ -43,35 +43,59 @@ class PostController {
     try {
       let { tag } = req.query;
       let posts = [];
-
       if (!tag) {
         posts = await Post.findAll();
-      }
+      } else {
+        const currentTag = await Tag.findOne({ where: { text: tag } });
 
-      for (const currentPost of posts) {
-        const tagIdsFromPostTag = await PostTag.findAll({
-          where: { postId: currentPost.id },
+        const postsByTag = await PostTag.findAll({
+          where: { tagId: currentTag.id },
         });
 
-        const tagsIds = tagIdsFromPostTag.map(
-          (currentTagId) => currentTagId.tagId
+        const postsIds = postsByTag.map(
+          (currentPostId) => currentPostId.postId
         );
-
-        const tagsFoCurrentPost = await Tag.findAll({
+        console.log('this is post ids ', postsIds);
+        posts = await Post.findAll({
           where: {
             id: {
-              [Op.in]: tagsIds,
+              [Op.in]: postsIds,
             },
           },
         });
-        const tagsText = tagsFoCurrentPost.map(
-          (currentTagId) => currentTagId.text
-        );
-        currentPost.dataValues.tags = tagsText;
       }
+
       return res.json(posts);
     } catch (error) {
       return res.status(404).json({ message: 'get all posts error' });
+    }
+  }
+  async getOne(req, res) {
+    try {
+      const { id } = req.params;
+      const post = await Post.findOne({ where: { id } });
+      const tagIdsFromPostTag = await PostTag.findAll({
+        where: { postId: post.id },
+      });
+
+      const tagsIds = tagIdsFromPostTag.map(
+        (currentTagId) => currentTagId.tagId
+      );
+
+      const tagsFoCurrentPost = await Tag.findAll({
+        where: {
+          id: {
+            [Op.in]: tagsIds,
+          },
+        },
+      });
+      const tagsText = tagsFoCurrentPost.map(
+        (currentTagId) => currentTagId.text
+      );
+      post.dataValues.tags = tagsText;
+      return res.json(post);
+    } catch (error) {
+      return res.status(404).json({ message: 'get one post error' });
     }
   }
 }
