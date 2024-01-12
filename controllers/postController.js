@@ -1,6 +1,7 @@
 const { v4 } = require('uuid');
 const { Post, Tag, PostTag } = require('../models/models');
 const path = require('path');
+const { Op } = require('sequelize');
 
 class PostController {
   async create(req, res) {
@@ -10,7 +11,12 @@ class PostController {
 
       let fileName = v4() + '.jpg';
       img.mv(path.resolve(__dirname, '..', 'static', fileName));
-      const newPost = await Post.create({ text, header, img: fileName });
+      const newPost = await Post.create({
+        text,
+        header,
+        img: fileName,
+        tag: [],
+      });
 
       if (tags) {
         for (const currentTagText of tags) {
@@ -35,10 +41,35 @@ class PostController {
   }
   async getAll(req, res) {
     try {
-      //   //get all types from bd
-      //   const types = await Type.findAll();
-      //   //return types with the res
-      return res.json({ message: 'hello world' });
+      let { tag } = req.query;
+      let posts = [];
+
+      if (!tag) {
+        posts = await Post.findAll();
+      }
+
+      for (const currentPost of posts) {
+        const tagIdsFromPostTag = await PostTag.findAll({
+          where: { postId: currentPost.id },
+        });
+
+        const tagsIds = tagIdsFromPostTag.map(
+          (currentTagId) => currentTagId.tagId
+        );
+
+        const tagsFoCurrentPost = await Tag.findAll({
+          where: {
+            id: {
+              [Op.in]: tagsIds,
+            },
+          },
+        });
+        const tagsText = tagsFoCurrentPost.map(
+          (currentTagId) => currentTagId.text
+        );
+        currentPost.dataValues.tags = tagsText;
+      }
+      return res.json(posts);
     } catch (error) {
       return res.status(404).json({ message: 'get all posts error' });
     }
