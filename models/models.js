@@ -15,7 +15,7 @@ const Tag = sequelize.define('tag', {
 
 const Email = sequelize.define('email', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  text: { type: DataTypes.STRING, allowNull: false },
+  text: { type: DataTypes.STRING, allowNull: false, unique: true },
 });
 
 const PostTag = sequelize.define('post_tag', {

@@ -9,6 +9,12 @@ class PostController {
       const { text, tags, header } = req.body;
       const { img } = req.files;
 
+      const candidat = await Post.findOne({ where: { header } });
+
+      if (candidat) {
+        return res.status(409).json({ message: 'this header already sented' });
+      }
+
       let fileName = v4() + '.jpg';
       img.mv(path.resolve(__dirname, '..', 'static', fileName));
       const newPost = await Post.create({
