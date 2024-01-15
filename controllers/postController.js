@@ -25,7 +25,8 @@ class PostController {
       });
 
       if (tags) {
-        for (const currentTagText of tags) {
+        const parsedTags = JSON.parse(tags);
+        for (const currentTagText of parsedTags) {
           let candidateTag = await Tag.findOne({
             where: { text: currentTagText },
           });
@@ -61,7 +62,7 @@ class PostController {
         const postsIds = postsByTag.map(
           (currentPostId) => currentPostId.postId
         );
-        console.log('this is post ids ', postsIds);
+
         posts = await Post.findAll({
           where: {
             id: {
