@@ -42,7 +42,7 @@ class PostController {
       //return in
       return res.json(newPost);
     } catch (error) {
-      return res.status(404).json({ message: 'post create error' });
+      return res.status(404).json({ message: 'post create error', error });
     }
   }
   async getAll(req, res) {
