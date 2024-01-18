@@ -23,7 +23,6 @@ class PostController {
         img: fileName,
         tag: [],
       });
-
       if (tags) {
         const parsedTags = JSON.parse(tags);
         for (const currentTagText of parsedTags) {

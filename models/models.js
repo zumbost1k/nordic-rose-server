@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 
 const Post = sequelize.define('post', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  text: { type: DataTypes.STRING, allowNull: false },
+  text: { type: DataTypes.STRING(9999), allowNull: false },
   img: { type: DataTypes.STRING, allowNull: false },
   header: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
