@@ -47,10 +47,13 @@ class PostController {
   }
   async getAll(req, res) {
     try {
-      let { tag } = req.query;
+      let { tag, limit, page } = req.query;
+      page = page || 1;
+      limit = limit || 3;
+      let offset = page * limit - limit;
       let posts = [];
       if (!tag) {
-        posts = await Post.findAll();
+        posts = await Post.findAndCountAll({ limit, offset });
       } else {
         const currentTag = await Tag.findOne({ where: { text: tag } });
 
@@ -62,13 +65,17 @@ class PostController {
           (currentPostId) => currentPostId.postId
         );
 
-        posts = await Post.findAll({
-          where: {
-            id: {
-              [Op.in]: postsIds,
+        posts = await Post.findAndCountAll(
+          {
+            where: {
+              id: {
+                [Op.in]: postsIds,
+              },
             },
           },
-        });
+          limit,
+          offset
+        );
       }
 
       return res.json(posts);
