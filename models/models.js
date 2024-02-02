@@ -6,6 +6,7 @@ const Post = sequelize.define('post', {
   text: { type: DataTypes.STRING(9999), allowNull: false },
   img: { type: DataTypes.STRING, allowNull: false },
   header: { type: DataTypes.STRING, unique: true, allowNull: false },
+  createdAt: { type: DataTypes.STRING },
 });
 
 const Tag = sequelize.define('tag', {

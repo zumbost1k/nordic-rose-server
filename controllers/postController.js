@@ -8,7 +8,7 @@ class PostController {
     try {
       const { text, tags, header } = req.body;
       const { img } = req.files;
-
+      const date = new Date();
       const candidat = await Post.findOne({ where: { header } });
 
       if (candidat) {
@@ -18,6 +18,7 @@ class PostController {
       let fileName = v4() + '.jpg';
       img.mv(path.resolve(__dirname, '..', 'static', fileName));
       const newPost = await Post.create({
+        createdAt: date.toISOString(),
         text,
         header,
         img: fileName,
