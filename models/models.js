@@ -1,13 +1,18 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 
-const Post = sequelize.define('post', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  text: { type: DataTypes.STRING(9999), allowNull: false },
-  img: { type: DataTypes.STRING, allowNull: false },
-  header: { type: DataTypes.STRING, unique: true, allowNull: false },
-  createdAt: { type: DataTypes.STRING },
-});
+const Post = sequelize.define(
+  'post',
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    text: { type: DataTypes.STRING(9999), allowNull: false },
+    img: { type: DataTypes.STRING, allowNull: false },
+    header: { type: DataTypes.STRING, unique: true, allowNull: false },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Tag = sequelize.define('tag', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
